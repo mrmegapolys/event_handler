@@ -2,6 +2,7 @@ import requests
 from bitrix24 import Bitrix24 as bt24
 from datetime import datetime
 from threading import Lock
+import time
 
 
 class Bitrix24Client:
@@ -19,12 +20,20 @@ class Bitrix24Client:
             print("Bitrix24Client:", *args)
 
     def _make_request(self, method, payload):
-        response = self._client.call_method(method, payload)
-        if response.get('error') == 'expired_token':
-            self._client.refresh_tokens()
-            self._print('Tokens refreshed!')
-            response = self._client.call_method(method, payload)
-        return response
+        while True:
+            try:
+                response = self._client.call_method(method, payload)
+                if response.get('error') == 'expired_token':
+                    self._client.refresh_tokens()
+                    self._print('Tokens refreshed!')
+                    response = self._client.call_method(method, payload)
+                if not response.get('result'):
+                    print(response)
+                    raise ValueError
+                return response
+            except ValueError:
+                print('Bitrix24: got incorrect response, retrying...')
+                time.sleep(1)
 
     def add_lead(self, lead_data):
         payload = {'fields': lead_data}
