@@ -2,11 +2,10 @@ import requests
 from threading import Lock
 
 class GoogleAnalyticsClient:
-    def __init__(self, tracking_id_filepath, verbose=False):
+    def __init__(self, config, verbose=False):
         self._verbose = verbose
         self._print('Authentificating...')
-        with open(tracking_id_filepath, 'r') as tid_file:
-            self._tracking_id = tid_file.read()[:-1] #the last symbol is '\n'
+        self._tracking_id = config['tracking_id']
         self._version = 1
         self.lock = Lock()
         self._print('Authentification successful!')

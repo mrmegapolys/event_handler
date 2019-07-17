@@ -16,12 +16,12 @@ def check_tokens(func):
 
 
 class GoogleSheetsClient:
-    def __init__(self, auth_filepath, verbose=False):
+    def __init__(self, config, verbose=False):
         self._verbose = verbose
         self._print('Authentificating...')
         scope = ['https://spreadsheets.google.com/feeds',
          'https://www.googleapis.com/auth/drive']
-        creds = ServiceAccountCredentials.from_json_keyfile_name(auth_filepath, scope)
+        creds = ServiceAccountCredentials.from_json_keyfile_name(config['credentials_filepath'], scope)
         self._client = gspread.authorize(creds)
         self.lock = Lock()
         self._print('Authentification successful!')

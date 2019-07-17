@@ -5,36 +5,24 @@ from threading import Lock
 
 
 class Bitrix24Client:
-    def __init__(self, creds_filepath, tokens_filepath, verbose=False):
+    def __init__(self, config, verbose=False):
         self._verbose = verbose
         self._print('Authentificating...')
-        self._tokens_filepath = tokens_filepath
-        with open(tokens_filepath, 'r') as f:
-            tokens = f.readlines()
-        with open(creds_filepath, 'r') as f:
-            creds = f.readlines()
         self.lock = Lock()
-        self._client = bt24(creds[0][:-1], client_id=creds[1][:-1], client_secret=creds[2][:-1],
-                                access_token=tokens[0][:-1], refresh_token=tokens[1][:-1]) #the last symbol is '\n'
-        self._refresh_tokens()
+        self._client = bt24(config['domain'], client_id=config['client_id'], client_secret=config['client_secret'],
+                                access_token=config['access_token'], refresh_token=config['refresh_token'])
+        self._client.refresh_tokens()
         self._print('Authentification successful!')
 
     def _print(self, *args):
         if self._verbose:
             print("Bitrix24Client:", *args)
 
-    def _refresh_tokens(self):
-        self._print('Refreshing tokens...')
-        self._client.refresh_tokens()
-        tokens = self._client.get_tokens()
-        with open(self._tokens_filepath, 'w') as f:
-            f.write(tokens['access_token'] + '\n' + tokens['refresh_token'] + '\n')
-        self._print('Tokens refreshed!')
-
     def _make_request(self, method, payload):
         response = self._client.call_method(method, payload)
         if response.get('error') == 'expired_token':
-            self._refresh_tokens()
+            self._client.refresh_tokens()
+            self._print('Tokens refreshed!')
             response = self._client.call_method(method, payload)
         return response
 
