@@ -15,7 +15,7 @@ class EventHandler:
         self.aggregator = EventAggregator()
         
     def add_threaded_function(self, function):
-        pass
+        self.threaded_functions.append(function)
 
     def _initialize_modules(self):
         for module_name in self.modules_config.sections():
@@ -25,7 +25,11 @@ class EventHandler:
                 self.modules[module_name] = module
 
     def _start_threaded(self):
-        pass
+        for function in self.threaded_functions:
+            thread = Thread(target=function,
+                            args=(self.aggregator, self.modules, self.storage, self.user_config),
+                            daemon=True)
+            thread.start()
 
     def start(self, modules_config_filepath, user_config_filepath=None):
         self.modules_config = ConfigParser()
@@ -35,6 +39,7 @@ class EventHandler:
             self.user_config.read(user_config_filepath)
 
         self._initialize_modules()
+        self._start_threaded()
         """
         while True:
             event = self.aggregator.get_event()
