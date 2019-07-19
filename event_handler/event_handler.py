@@ -21,8 +21,7 @@ class EventHandler:
         for module_name in self.modules_config.sections():
             module_config = self.modules_config[module_name]
             if module_config.getboolean('enabled'):
-                module_class = eval('modules.' + module_name)
-                module = module_class(module_config)
+                module = modules.__dict__[module_name](module_config)
                 self.modules[module_name] = module
 
     def _start_threaded(self):
