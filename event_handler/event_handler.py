@@ -1,4 +1,5 @@
 from aggregator import EventAggregator
+from storage import Storage
 from threading import Thread
 from configparser import ConfigParser
 import modules
@@ -8,7 +9,7 @@ class EventHandler:
         self.modules = {}
         self.actions = {}
         self.threaded_functions = []
-        self.data = {}
+        self.storage = Storage()
         self.user_config = None
         self.modules_config = None
         self.aggregator = EventAggregator()
