@@ -2,8 +2,7 @@ from threading import Thread
 from configparser import ConfigParser
 from copy import deepcopy
 
-from .aggregator import EventAggregator
-from .storage import Storage
+from .utils import EventAggregator, Storage
 from . import modules
 
 class EventHandler:
