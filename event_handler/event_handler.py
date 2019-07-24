@@ -1,7 +1,9 @@
-from aggregator import EventAggregator
-from storage import Storage
 from threading import Thread
 from configparser import ConfigParser
+from copy import deepcopy
+
+from aggregator import EventAggregator
+from storage import Storage
 import modules
 
 class EventHandler:
@@ -17,6 +19,11 @@ class EventHandler:
     def add_threaded_function(self, function):
         self.threaded_functions.append(function)
 
+    def register_action(self, event_type, action):
+        if not self.actions.get(event_type):
+            self.actions[event_type] = []
+        self.actions[event_type].append(action)
+
     def _initialize_modules(self):
         for module_name in self.modules_config.sections():
             module_config = self.modules_config[module_name]
@@ -27,7 +34,7 @@ class EventHandler:
     def _start_threaded(self):
         for function in self.threaded_functions:
             thread = Thread(target=function,
-                            args=(self.aggregator, self.modules, self.storage, self.user_config),
+                            args=(self.modules, self.storage, deepcopy(self.user_config), self.aggregator),
                             daemon=True)
             thread.start()
 
@@ -40,12 +47,9 @@ class EventHandler:
 
         self._initialize_modules()
         self._start_threaded()
-        """
+
         while True:
             event = self.aggregator.get_event()
-            actions = self.actions[event]
+            actions = self.actions[event.type]
             for action in actions:
-                action()
-        """
-
-
+                action(self.modules, self.storage, deepcopy(self.user_config), event)
