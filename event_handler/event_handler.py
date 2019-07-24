@@ -19,10 +19,11 @@ class EventHandler:
     def add_threaded_function(self, function):
         self.threaded_functions.append(function)
 
-    def register_action(self, event_type, action):
-        if not self.actions.get(event_type):
-            self.actions[event_type] = []
-        self.actions[event_type].append(action)
+    def register_action(self, event_class, action):
+        event_name = event_class.__name__
+        if not self.actions.get(event_name):
+            self.actions[event_name] = []
+        self.actions[event_name].append(action)
 
     def start(self, modules_config_filepath, user_config_filepath=None, max_workers=1):
         self._init(modules_config_filepath, user_config_filepath)
@@ -30,7 +31,7 @@ class EventHandler:
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             while True:
                 event = self.aggregator.get_event()
-                actions = self.actions[event.type]
+                actions = self.actions[event.__class__.__name__]
                 executor.submit(self._run_actions, event, actions)
 
 #------------------------------------------------

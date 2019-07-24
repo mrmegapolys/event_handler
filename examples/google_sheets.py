@@ -1,13 +1,12 @@
-from event_handler import EventHandler, BaseEvent
+from event_handler import EventHandler
 import time
 
-class GSheetsEvent(BaseEvent):
+class GSheetsEvent:
     def __init__(self, data):
-        super().__init__(data)
-
-class TimerEvent(BaseEvent):
+        self.data = data
+class TimerEvent:
     def __init__(self, data):
-        super().__init__(data)
+        self.data = data
 
 
 modules_conf_filepath = './conf_files/modules.ini'
@@ -50,9 +49,9 @@ def main():
 
     handler.add_threaded_function(gsheets_listener)
     handler.add_threaded_function(timer_listener)
-    handler.register_action(GSheetsEvent(None).type, printer1) #WTF? Needa change event type handling
-    handler.register_action(TimerEvent(None).type, printer1)
-    handler.register_action(TimerEvent(None).type, printer2)
+    handler.register_action(GSheetsEvent, printer1) #WTF? Needa change event type handling
+    handler.register_action(TimerEvent, printer1)
+    handler.register_action(TimerEvent, printer2)
 
     handler.start(modules_conf_filepath, user_conf_filepath, max_workers=3)
 
