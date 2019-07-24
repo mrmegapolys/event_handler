@@ -2,9 +2,9 @@ from threading import Thread
 from configparser import ConfigParser
 from copy import deepcopy
 
-from aggregator import EventAggregator
-from storage import Storage
-import modules
+from .aggregator import EventAggregator
+from .storage import Storage
+from . import modules
 
 class EventHandler:
     def __init__(self):
