@@ -1,6 +1,7 @@
 from threading import Thread
 from configparser import ConfigParser
 from copy import deepcopy
+from concurrent.futures import ThreadPoolExecutor
 
 from .utils import EventAggregator, Storage
 from . import modules
@@ -37,7 +38,11 @@ class EventHandler:
                             daemon=True)
             thread.start()
 
-    def start(self, modules_config_filepath, user_config_filepath=None):
+    def _run_actions(self, event, actions):
+        for action in actions:
+            action(self.modules, self.storage, deepcopy(self.user_config), event)
+
+    def _init(self, modules_config_filepath, user_config_filepath):
         self.modules_config = ConfigParser()
         self.modules_config.read(modules_config_filepath)
         if user_config_filepath:
@@ -47,8 +52,11 @@ class EventHandler:
         self._initialize_modules()
         self._start_threaded()
 
-        while True:
-            event = self.aggregator.get_event()
-            actions = self.actions[event.type]
-            for action in actions:
-                action(self.modules, self.storage, deepcopy(self.user_config), event)
+    def start(self, modules_config_filepath, user_config_filepath=None, max_workers=1):
+        self._init(modules_config_filepath, user_config_filepath)
+
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            while True:
+                event = self.aggregator.get_event()
+                actions = self.actions[event.type]
+                executor.submit(self._run_actions, event, actions)
