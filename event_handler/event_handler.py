@@ -24,6 +24,17 @@ class EventHandler:
             self.actions[event_type] = []
         self.actions[event_type].append(action)
 
+    def start(self, modules_config_filepath, user_config_filepath=None, max_workers=1):
+        self._init(modules_config_filepath, user_config_filepath)
+
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            while True:
+                event = self.aggregator.get_event()
+                actions = self.actions[event.type]
+                executor.submit(self._run_actions, event, actions)
+
+#------------------------------------------------
+
     def _initialize_modules(self):
         for module_name in self.modules_config.sections():
             module_config = self.modules_config[module_name]
@@ -51,12 +62,3 @@ class EventHandler:
 
         self._initialize_modules()
         self._start_threaded()
-
-    def start(self, modules_config_filepath, user_config_filepath=None, max_workers=1):
-        self._init(modules_config_filepath, user_config_filepath)
-
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            while True:
-                event = self.aggregator.get_event()
-                actions = self.actions[event.type]
-                executor.submit(self._run_actions, event, actions)
