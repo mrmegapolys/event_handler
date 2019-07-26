@@ -21,8 +21,7 @@ class EventHandler:
 
     def register_action(self, event_class, action):
         event_name = event_class.__name__
-        if not self.actions.get(event_name):
-            self.actions[event_name] = []
+        self.actions.setdefault(event_name, [])
         self.actions[event_name].append(action)
 
     def start(self, modules_config_filepath, user_config_filepath=None, max_workers=1):

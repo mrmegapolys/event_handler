@@ -49,7 +49,7 @@ def main():
 
     handler.add_threaded_function(gsheets_listener)
     handler.add_threaded_function(timer_listener)
-    handler.register_action(GSheetsEvent, printer1) #WTF? Needa change event type handling
+    handler.register_action(GSheetsEvent, printer1)
     handler.register_action(TimerEvent, printer1)
     handler.register_action(TimerEvent, printer2)
 
