@@ -9,7 +9,7 @@ class APIError(Exception):
         self.response = response
 
 
-class Bitrix24Client:
+class Bitrix24:
     def __init__(self, config, verbose=False):
         self._verbose = verbose
         self._print('Authentificating...')

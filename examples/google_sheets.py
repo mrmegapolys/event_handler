@@ -14,7 +14,7 @@ user_conf_filepath = './conf_files/config.ini'
 
 
 def gsheets_listener(modules, storage, config, aggregator):
-    gsheets = modules['GoogleSheetsClient']
+    gsheets = modules['GoogleSheets']
 
     spreadsheet = gsheets.open_spreadsheet(config['GSheetsSettings']['sheet_name'])
     worksheet = spreadsheet.sheet1

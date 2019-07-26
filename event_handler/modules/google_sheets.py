@@ -25,7 +25,7 @@ def check_tokens(func):
     return wrapped
 
 
-class GoogleSheetsClient:
+class GoogleSheets:
     def __init__(self, config, verbose=False):
         self._verbose = verbose
         self._print('Authentificating...')

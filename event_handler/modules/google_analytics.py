@@ -1,7 +1,7 @@
 import requests
 from threading import Lock
 
-class GoogleAnalyticsClient:
+class GoogleAnalytics:
     def __init__(self, config, verbose=False):
         self._verbose = verbose
         self._print('Authentificating...')

@@ -1,12 +1,12 @@
-[GoogleSheetsClient]
+[GoogleSheets]
 enabled: true
 credentials_filepath: google_sheets_creds.json
 
-[GoogleAnalyticsClient]
+[GoogleAnalytics]
 enabled: true
 tracking_id: XX-000000000-0
 
-[Bitrix24Client]
+[Bitrix24]
 enabled: true
 domain: b24-XX0000.bitrix24.ru
 client_id: local.XXXXXXXXXXXXXX.XXXXXXXX
@@ -14,7 +14,7 @@ client_secret: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 access_token: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 refresh_token: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-[WhatsAppAPI]
+[WhatsApp]
 enabled: false
 endpoint: https://XX00.chat-api.com/instance00000/
 token: XXXXXXXXXXXXXXXX
