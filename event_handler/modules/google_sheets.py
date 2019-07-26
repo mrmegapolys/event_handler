@@ -6,12 +6,21 @@ from functools import wraps
 def check_tokens(func):
     @wraps(func)
     def wrapped(self, *args, **kwargs):
-        try:
-            return func(self, *args, **kwargs)
-        except gspread.exceptions.APIError:
-            self._client.login()
-            self._print('Tokens updated!')
-            return func(self, *args, **kwargs)
+        while True:
+            try:
+                return func(self, *args, **kwargs)
+            except gspread.exceptions.APIError as e:
+                if e.response.json().get('error', {}).get('code') == 401:
+                    self._client.login()
+                    self._print('Tokens updated!')
+                else:
+                    print('GoogleSheetsClient: bad response:')
+                    print(e.response.json())
+            except Exception as e:
+                print('GoogleSheetsClient: unexpected error:')
+                print(e)
+            finally:
+                time.sleep(1)
     return wrapped
 
 

@@ -4,6 +4,10 @@ from datetime import datetime
 from threading import Lock
 import time
 
+class APIError(Exception):
+    def __init__(self, response):
+        self.response = response
+
 
 class Bitrix24Client:
     def __init__(self, config, verbose=False):
@@ -23,16 +27,20 @@ class Bitrix24Client:
         while True:
             try:
                 response = self._client.call_method(method, payload)
-                if response.get('error') == 'expired_token':
-                    self._client.refresh_tokens()
-                    self._print('Tokens refreshed!')
-                    response = self._client.call_method(method, payload)
                 if not response.get('result'):
-                    print(response)
-                    raise ValueError
+                    raise APIError(response)
                 return response
-            except ValueError:
-                print('Bitrix24: got incorrect response, retrying...')
+            except APIError as e:
+                if e.response.get('error') == 'expired_token':
+                    self._client.refresh_tokens()
+                    self._print('Tokens updated!')
+                else:
+                    print('Bitrix24Client: bad response for method \'{}\' with payload {}:'.format(method, payload))
+                    print(e.response)
+            except Exception as e:
+                print('Bitrix24Client: unexpected error:')
+                print(e)
+            finally:
                 time.sleep(1)
 
     def add_lead(self, lead_data):
