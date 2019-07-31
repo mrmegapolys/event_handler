@@ -32,8 +32,11 @@ class Bitrix24:
                 return response
             except APIError as e:
                 if e.response.get('error') == 'expired_token':
-                    self._client.refresh_tokens()
-                    self._print('Tokens updated!')
+                    try:
+                        self._client.refresh_tokens()
+                        self._print('Tokens updated!')
+                    except Exception as e:
+                        print('Token update error:', e)
                 else:
                     print('Bitrix24Client: bad response for method \'{}\' with payload {}:'.format(method, payload))
                     print(e.response)
