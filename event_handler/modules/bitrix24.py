@@ -98,3 +98,21 @@ class Bitrix24:
             deal_list.extend(response['result'])
         self._print('Data retrieved successfully!')
         return deal_list
+
+    def add_commentary(self, message, entity_type_id, entity_id):
+        payload = {
+            'fields': {
+                'MESSAGE': message,
+                'ENTITYTYPEID': entity_type_id,
+                'ENTITYID': entity_id,
+            }
+        }
+        self._print('Adding commentary with params', payload)
+        response = self._make_request('crm.livefeedmessage.add', payload)
+        self._print('Commentary added successfully!')
+        return response
+
+    def add_msg_to_deal(self, author, text, deal_id):
+        message = '{}: {}'.format(author, text)
+        entity_type_id = 2 #type id corresponding to deal
+        return self.add_commentary(message, entity_type_id, deal_id)
