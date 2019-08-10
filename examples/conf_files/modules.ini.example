@@ -18,3 +18,4 @@ refresh_token: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 enabled: false
 endpoint: https://XX00.chat-api.com/instance00000/
 token: XXXXXXXXXXXXXXXX
+polling_delay: 1

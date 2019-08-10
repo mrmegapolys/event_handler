@@ -1,13 +1,14 @@
 import requests
 import time
 
-class WhatsApp: #TODO: error handling
+class WhatsApp:
     def __init__(self, config):
         self.token = config['token']
         self.endpoint = config['endpoint']
+        self.delay = config['polling_delay']
         self.timestamp = time.time()
 
-    def messages_emitter(self):
+    def message_emitter(self):
         address = self.endpoint + '/messages'
         params = {
             'token': self.token,
@@ -50,6 +51,6 @@ class WhatsApp: #TODO: error handling
 
     @staticmethod
     def _add_markup(markup):
-        result = ''
+        result = '\n' + '-' * 10 + '\n'
         return result
         
